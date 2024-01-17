@@ -1,16 +1,14 @@
 
-
 <?php
-require_once 'delete.php';
-$con=mysqli_connect("localhost","root","","ecomregister");
-if(!$con){
+$conn=mysqli_connect("localhost","root","","ecomregister");
+if(!$conn){
     die("connection error");
 }
 
 
 //require_once('../../databasedbs/config.php'); 
 $query = "SELECT * from kicks";
-$result = mysqli_query($con, $query);
+$result = mysqli_query($conn, $query);
 
 ?>
 
@@ -46,7 +44,8 @@ $result = mysqli_query($con, $query);
                 <th>Username</th>
                 <th>Email</th>
                 <th>Password</th>
-                <th>Update</th>
+                <th>Usertype</th>
+                <th>Edit</th>
                 <th>Delete</th>
 
             </tr>
@@ -59,12 +58,14 @@ $result = mysqli_query($con, $query);
                 $username = $row['username'];
                 $email = $row['email'];
                 $password = $row['password'];
+                $usertype =$row['usertype'];
             ?>
                 <tr>
                     <td><?php echo $id; ?></td>
                     <td><?php echo $username; ?></td>
                     <td><?php echo $email; ?></td>
                     <td><?php echo $password; ?></td>
+                    <td><?php echo $usertype; ?></td>
                     <td>
                     <form action=""method="post">
                         <button  type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">
@@ -80,6 +81,7 @@ $result = mysqli_query($con, $query);
     if($result){
         echo "deleted succesfully";
         header("Location: adminprofile.php");
+        
     }else{
         echo"error!something wrong?";
     }

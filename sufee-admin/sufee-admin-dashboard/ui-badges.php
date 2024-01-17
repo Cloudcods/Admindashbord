@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="vendors/selectFX/css/cs-skin-elastic.css">
 
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="nap.css">
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
 
@@ -277,100 +278,138 @@
                 </div>
             </div>
         </div>
-
-        <div class="content mt-3">
-            <div class="animated fadeIn">
-                <div class="row">
-
-                    <div class="badges">
-                        <div class="col-lg-6">
-
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Badges</strong>
-                                    <small>Use <code>.badge</code> class within <code>&lt;span&gt;</code> elements to create badges:
-                                    </small>
-                                </div>
-                                <div class="card-body">
-
-                                    <a href="#">News <span class="badge badge-primary">5</span></a>
-                                    <br>
-                                    <a href="#">Comments <span class="badge badge-warning">10</span></a>
-                                    <br>
-                                    <a href="#">Updates <span class="badge badge-success">2</span></a>
-                                </div>
-                            </div><!-- /# card -->
+        <?php
 
 
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Labels</strong>
-                                </div>
-                                <div class="card-body">
-                                    <p class="text-muted m-b-15">Use the <code>.label</code> class,&nbsp; followed by one of the six contextual classes <code>.label-default</code>, <code>.label-primary</code>, <code>.label-success</code>,
-                                        <code>.label-info</code>, <code>.label-warning</code> or <code>.label-danger</code>, within a <code>&lt;span&gt;</code> element to create a label:</p>
+include '../databasedbs/datadbs.php';
+// Define variables and set to empty values
+$usernameErr = $emailErr = $passwordErr = "";
+$username = $email = $password = "";
 
-                                    <h1>Example heading <span class="badge badge-secondary">New</span></h1>
-                                    <h2>Example heading <span class="badge badge-secondary">New</span></h2>
-                                    <h3>Example heading <span class="badge badge-secondary">New</span></h3>
-                                    <h4>Example heading <span class="badge badge-secondary">New</span></h4>
-                                    <h5>Example heading <span class="badge badge-secondary">New</span></h5>
-                                    <h6>Example heading <span class="badge badge-secondary">New</span></h6>
-                                </div>
-                            </div>
+$user_id = $_GET['rowid'];
+    echo $user_id;
 
-                        </div>
+// Function to sanitize input data
+function sanitize_input($data) {
+    $data = trim($data);
+    $data = stripslashes($data);
+    $data = htmlspecialchars($data);
+    return $data;
+}
 
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Validate Username
+    if (empty($_POST["username"])) {
+        $usernameErr = "Username is required";
+    } else {
+        $username = sanitize_input($_POST["username"]);
+        // Additional validation if needed
+    }
 
-                        <div class="col-lg-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Badges  in Buttons</strong>
-                                </div>
-                                <div class="card-body">
-                                    <p class="text-muted m-b-15">Use the <code>.badge</code> class within <code>&lt;span&gt;</code> elements to create badges:</p>
+    // Validate Email
+    if (empty($_POST["email"])) {
+        $emailErr = "Email is required";
+    } else {
+        $email = sanitize_input($_POST["email"]);
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "Invalid email format";
+        }
+    }
 
-                                    <button type="button" class="btn btn-primary m-l-10 m-b-10">Primary <span class="badge badge-light">7</span></button>
-                                    <button type="button" class="btn btn-success m-l-10 m-b-10">Success <span class="badge badge-light">7</span></button>
-                                    <button type="button" class="btn btn-info m-l-10 m-b-10">Info <span class="badge badge-light">7</span></button>
-                                    <button type="button" class="btn btn-warning m-l-10 m-b-10">Warning <span class="badge badge-light">7</span></button>
-                                    <button type="button" class="btn btn-danger m-l-10 m-b-10">Danger <span class="badge badge-light">7</span></button>
-                                </div>
-                            </div>
+    // Validate Password
+    if (empty($_POST["password"])) {
+        $passwordErr = "Password is required";
+    } else {
+        $password = sanitize_input($_POST["password"]);
+        // Validate password strength
+        if (strlen($password) < 8 || !preg_match('/[A-Z]/', $password) || !preg_match('/[a-z]/', $password) || !preg_match('/[0-9]/', $password) || !preg_match('/[^a-zA-Z0-9]/', $password)) {
+            $passwordErr = "Password should be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one digit, and one special character";
+        }
+    }
 
-                            <div class="card">
-                                <div class="card-header">
-                                    <strong>Labels</strong>
-                                </div>
-                                <div class="card-body">
-                                    <p class="text-muted m-b-15">Use the <code>.label</code> class,&nbsp; followed by one of the six contextual classes <code>.label-default</code>, <code>.label-primary</code>, <code>.label-success</code>,
-                                        <code>.label-info</code>, <code>.label-warning</code> or <code>.label-danger</code>, within a <code>&lt;span&gt;</code> element to create a label:</p>
+    // If there are no errors, you can proceed with further processing
+    if (empty($usernameErr) && empty($emailErr) && empty($passwordErr)) {
+        // Perform your update logic here
 
-                                    <span class="badge badge-primary">Primary</span>
-                                    <span class="badge badge-secondary">Secondary</span>
-                                    <span class="badge badge-success">Success</span>
-                                    <span class="badge badge-danger">Danger</span>
-                                    <span class="badge badge-warning">Warning</span>
-                                    <span class="badge badge-info">Info</span>
-                                    <span class="badge badge-light">Light</span>
-                                    <span class="badge badge-dark">Dark</span>
+        // For example, you can display a success messa   
 
-
-                                </div>
-                            </div>
-
-                        </div>
-                    </div> <!-- .badges -->
-
-                </div><!-- .row -->
-            </div><!-- .animated -->
-        </div><!-- .content -->
+}
+}
 
 
-    </div><!-- /#right-panel -->
+// Fetch the row ID from the URL
+$id = isset($_GET['rowid']) ? $_GET['rowid'] : null;
 
-    <!-- Right Panel -->
 
+ // Fetch the data of the specific row to pre-fill the form
+$select_query = "SELECT * FROM kicks WHERE id = '$id'";
+$result = mysqli_query($conn, $select_query);
+
+
+
+if($result){
+$row = mysqli_fetch_array($result, MYSQLI_ASSOC);
+$username = $row['username'];
+$email = $row['email'];
+
+}else{
+    echo "Failed to fetch Data";
+}
+
+if(isset($_POST['update'])){
+    $u_id = $user_id;
+    echo $u_id;
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $update_query = "UPDATE kicks SET username = '$username', email = '$email' WHERE id  = '$u_id'";
+    $update_query_run = mysqli_query($conn, $update_query);
+    if($update_query_run){
+        //echo " Updated Successfully !";
+
+        
+    }else{
+        echo " Failed !";
+    }
+
+}
+
+?>
+<form method="post" action="">
+<div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Profile
+                <button type="button" href="kicks/sufee-admin/sufee-admin-dashboard/page-register.php" class="btn btn-primary" data-toggle="modal" data-target="#addadminprofile">
+                    view my edit Profile
+                </button>
+            </h6>
+        </div>
+        <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" class="form-control" placeholder="username" name="username" value="<?php echo $username; ?>">
+        <span class="error"><?php echo $usernameErr; ?></span>
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email:</label>
+        <input type="text" class="form-control" placeholder="email" name="email" value="<?php echo $email; ?>">
+        <span class="error"><?php echo $emailErr; ?></span>
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" class="form-control" placeholder="Password" name="password">
+        <span class="error"><?php echo $passwordErr; ?></span>
+    </div>
+
+    <div class="form-btn">
+    <input type="submit" class="btn btn-primary" value="update" name="update"></button>
+    </div>
+</form>
+</body>
+</html>
+        
 
     <script src="vendors/jquery/dist/jquery.min.js"></script>
     <script src="vendors/popper.js/dist/umd/popper.min.js"></script>

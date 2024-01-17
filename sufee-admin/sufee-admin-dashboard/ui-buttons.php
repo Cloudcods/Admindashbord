@@ -257,6 +257,10 @@
 
         </header><!-- /header -->
         <!-- Header-->
+        <?php
+
+        
+        ?>
 
         <div class="breadcrumbs">
             <div class="col-sm-4">
@@ -278,7 +282,18 @@
                 </div>
             </div>
         </div>
+        <?php
+$con=mysqli_connect("localhost","root","","ecomregister");
+if(!$con){
+    die("connection error");
+}
 
+
+
+$query = "SELECT * from kicks";
+$result = mysqli_query($con, $query);
+
+?>
                               
             <!-- Right Panel -->
 
@@ -290,29 +305,33 @@
                 <th>Username</th>
                 <th>Email</th>
                 <th>Password</th>
-                <th>Update</th>
-                <th>Delete</th>
+                <th>Usertype</th>
+                <th>update</th>
+                <th>Delete</Th>
 
             </tr>
         </thead>
         <tbody>
             <?php
+    
             // Fetch and display data from the database
             while ($row = mysqli_fetch_assoc($result)) {
                 $id = $row['id']; // Define $id based on the current row
                 $username = $row['username'];
                 $email = $row['email'];
                 $password = $row['password'];
+                $usertype=$row['usertype'];
             ?>
                 <tr>
                     <td><?php echo $id; ?></td>
                     <td><?php echo $username; ?></td>
                     <td><?php echo $email; ?></td>
                     <td><?php echo $password; ?></td>
+                    <td><?php echo $usertype; ?></td>
                     <td>
                     <form action=""method="post">
                         <button  type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">
-                            <a href="update.php?rowid=<?php echo $id; ?>" class="text-light">Edit</a>
+                            <a href="ui-badges.php?rowid=<?php echo $id; ?>" class="text-light">Edit</a>
                         </button> 
             </form>
                     </td>
@@ -320,17 +339,18 @@
                         if(isset($_POST['delete'])){
  
     $sql = "DELETE FROM kicks WHERE id = $id";
-    $result=mysqli_query($conn,$sql);
+    $result=mysqli_query($con,$sql);
     if($result){
         echo "deleted succesfully";
-        header("Location: adminprofile.php");
+
+
     }else{
         echo"error!something wrong?";
     }
     }
     ?>
     <td>
-<form action="adminprofile.php"method="post">
+<form action=""method="post">
                         <button type="submit" name="delete"class="btn btn-danger btn-flat m-b-30 m-t-30"
                             class="text-light">Delete</button>
 </form>
@@ -344,6 +364,7 @@
                 </tr>
             <?php
             }
+        
             ?>
         </tbody>
     </table>
@@ -359,5 +380,4 @@
 
 
 </body>
-
 </html>

@@ -8,8 +8,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+        $usertype=$_POST['usertype'];
 
-        if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password'])) {
+        if (empty($_POST['username']) || empty($_POST['email']) || empty($_POST['password'])||empty($_POST['usertype'])) {
             $emptyError = "Please enter all the details!";
         }
 
@@ -27,6 +28,13 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                 $passwordError = "Password must have one uppercase letter, one lowercase letter, one number and one special character!";
             }
         }
+        if(isset($_POST['usertype'])){
+            $usertype=$_POST['usertype'];
+        }
+        if(isset($_POST['usertype'])){
+            $admin=$_POST['usertype'];
+        }
+        
     } else {
         echo "Sorry could not find any data!";
     }
@@ -51,12 +59,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 
-    if (empty($errors['username']) && empty($errors['email']) && empty($errors['password'])) {
-        $sql = "INSERT INTO kicks (username, email, password) VALUES (?, ?, ?)";
+    if (empty($errors['username']) && empty($errors['email']) && empty($errors['password'])&& empty($errors['usertype'])) {
+        $sql = "INSERT INTO kicks (username, email, password, usertype) VALUES (?, ?, ?, ?)";
         $stmt = mysqli_stmt_init($conn);
 
         if (mysqli_stmt_prepare($stmt, $sql)) {
-            mysqli_stmt_bind_param($stmt, "sss", $username, $email, $passwordHash);
+            mysqli_stmt_bind_param($stmt, "ssss", $username, $email, $passwordHash, $usertype);
 
             if (mysqli_stmt_execute($stmt)) {
                 header('location:page-login.php');
@@ -138,6 +146,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
                         </div>
                         <?php if(isset($passwordError)){echo "<div class='text-danger text-center small'>$passwordError</div>";} ?>
                         <?php if(isset($emptyError)){echo "<div class='text-danger small' role='alert'>$emptyError</div>";}?>
+
+                            <input type="hidden"name="usertype"value="admin">
+                            <div class="form-group">
+    <label>User Type</label>
+    <select name="usertype" class="form-control">
+        <option value="admin">Admin</option>
+        <option value="user">User</option>
+        <!-- Add more options if needed -->
+    </select>
+</div>
 
                                     <div class="checkbox">
                                         <label>
