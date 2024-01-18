@@ -1,4 +1,5 @@
 <?php
+session_start();
 include('../databasedbs/datadbs.php');
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -77,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         }
     }
 }
+
 ?>
 
 

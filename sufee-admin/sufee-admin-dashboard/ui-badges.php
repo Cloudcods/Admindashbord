@@ -339,6 +339,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 
+
 // Fetch the row ID from the URL
 $id = isset($_GET['rowid']) ? $_GET['rowid'] : null;
 
@@ -353,6 +354,8 @@ if($result){
 $row = mysqli_fetch_array($result, MYSQLI_ASSOC);
 $username = $row['username'];
 $email = $row['email'];
+$usertypeupdate=$row['usertype'];
+
 
 }else{
     echo "Failed to fetch Data";
@@ -360,19 +363,16 @@ $email = $row['email'];
 
 if(isset($_POST['update'])){
     $u_id = $user_id;
-    echo $u_id;
     $username = $_POST['username'];
     $email = $_POST['email'];
-    $update_query = "UPDATE kicks SET username = '$username', email = '$email' WHERE id  = '$u_id'";
+    $usertypeupdate = isset($_POST['usertype']) ? $_POST['usertype'] : ''; // Use the correct field name
+    $update_query = "UPDATE kicks SET username = '$username', email = '$email', usertype='$usertypeupdate' WHERE id  = '$u_id'";
     $update_query_run = mysqli_query($conn, $update_query);
     if($update_query_run){
-        //echo " Updated Successfully !";
-
-        
-    }else{
+    
+    } else {
         echo " Failed !";
     }
-
 }
 
 ?>
@@ -402,10 +402,20 @@ if(isset($_POST['update'])){
         <input type="password" class="form-control" placeholder="Password" name="password">
         <span class="error"><?php echo $passwordErr; ?></span>
     </div>
-
-    <div class="form-btn">
-    <input type="submit" class="btn btn-primary" value="update" name="update"></button>
+    <div class="form-group">
+        <label for="usertype">USERTYPE:</label>
+        <select  name="usertype"class="form-control">
+            <option value="admin">Admin</option>
+            <option value="user">user</option>
     </div>
+
+    
+    
+<br>
+    <div class="form-btn">
+    <input type="submit" class="btn btn-primary" value="update" name="update"></button></br>
+    </div>
+
 </form>
 </body>
 </html>

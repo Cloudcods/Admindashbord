@@ -44,9 +44,9 @@ $result = mysqli_query($conn, $query);
                 <th>Username</th>
                 <th>Email</th>
                 <th>Password</th>
-                <th>Usertype</th>
-                <th>Edit</th>
-                <th>Delete</th>
+                <th>edit</th>
+                <th>delete</th>
+                <th>usertype</th>
 
             </tr>
         </thead>
@@ -90,7 +90,7 @@ $result = mysqli_query($conn, $query);
     <td>
 <form action="adminprofile.php"method="post">
                         <button type="submit" name="delete"class="btn btn-danger btn-flat m-b-30 m-t-30"
-                            class="text-light">Delete</button>
+                           <a href="adminprofile.php"text-light">Delete</button>
 </form>
 
 </td>              

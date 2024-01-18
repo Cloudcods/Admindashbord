@@ -4,10 +4,19 @@ session_start();
 if(isset($_POST["signin"])) {
     $email = $_POST["email"];
     $password = $_POST["password"];
+    $role_as=$row['role_as'];
     require_once "../databasedbs/datadbs.php";
     $sql = "SELECT * FROM kicks WHERE email = '$email'";
     $result = mysqli_query($conn, $sql);
     $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
+    
+
+    $_SESSION['auth']="role_as";
+    $_SESSION['auth_user']=[
+        'email'=>$email,
+        'password'=>$password,
+
+    ];
 
     if ($user) {
         if (password_verify($password, $user["password"])) {
@@ -38,6 +47,7 @@ if (isset($_SESSION['error'])) {
 } else {
     $errorMessage = '';
 }
+
 ?>
 <!doctype html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
@@ -77,6 +87,9 @@ if (isset($_SESSION['error'])) {
 
     <div class="sufee-login d-flex align-content-center flex-wrap">
         <div class="container">
+            <?php
+               include('fontpage/message.php'); 
+            ?>
             <div class="login-content">
                 <div class="login-logo">
                     <a href="index.html">
