@@ -10,8 +10,7 @@ else
 {
     if($_SESSION['auth']=="1")
     {
-    
-        
+        header("location:page-login.php");
     }
     else
     {

@@ -68,13 +68,12 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
             mysqli_stmt_bind_param($stmt, "ssss", $username, $email, $passwordHash, $usertype);
 
             if (mysqli_stmt_execute($stmt)) {
-                header('location:page-login.php');
                 echo "<div class='alert alert-success'><p>You are registered successfully. <a href='page-login.php'>Login</a></p></div>";
             } else {
                 echo "<div class='alert alert-danger'><p>Registration failed. Please try again.</p></div>";
+                echo "Error: " . mysqli_error($conn); // Output the MySQL error for debugging
             }
-        } else {
-            die("Something went wrong");
+            
         }
     }
 }

@@ -1,54 +1,80 @@
 <?php
 session_start();
+include '../databasedbs/datadbs.php';
 
-if(isset($_POST["signin"])) {
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $role_as=$row['role_as'];
-    require_once "../databasedbs/datadbs.php";
-    $sql = "SELECT * FROM kicks WHERE email = '$email'";
-    $result = mysqli_query($conn, $sql);
-    $user = mysqli_fetch_array($result, MYSQLI_ASSOC);
-    
+if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
-    $_SESSION['auth']="role_as";
-    $_SESSION['auth_user']=[
-        'email'=>$email,
-        'password'=>$password,
+    if (isset($_POST['signin'])) {
+        $email = $_POST['email'];
+        $password = $_POST['password'];
 
-    ];
+        if (empty($email) || empty($password)) {
+            $_SESSION['status'] = "Please fill in all fields";
+            header('Location: page-login.php');
+            exit();
+        }
 
-    if ($user) {
-        if (password_verify($password, $user["password"])) {
-            $_SESSION["user"] = "yes";
-            header("Location: index.php");
-            die();
+        $log_query = "SELECT * FROM kicks WHERE email = ?";
+        $stmt = mysqli_stmt_init($conn);
+
+        if (mysqli_stmt_prepare($stmt, $log_query)) {
+            mysqli_stmt_bind_param($stmt, "s", $email);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+            $user_data = mysqli_fetch_assoc($result);
+
+            if ($user_data) {
+                // Verify password
+                if (password_verify($password, $user_data['password'])) {
+                    // Password is correct, set session and redirect
+                    $_SESSION['auth'] = true;
+                    $_SESSION['auth_user'] = [
+                        'user_id' => $user_data['id'],
+                        'user_name' => $user_data['username'],
+                        'user_email' => $user_data['email'],
+                        'user_role' => $user_data['usertype'],
+                    ];
+
+                    $_SESSION['status'] = "Logged in successfully";
+
+                    if ($user_data['usertype'] == 'admin') {
+                        header('Location: index.php');
+                        $_SESSION['status'] = "Admin Login Successful";
+                        $_SESSION['status_code'] = "success";
+                    } else {
+                        header('Location: ../databasedbs/index.php');
+                        $_SESSION['status'] = "User Login Successful";
+                        $_SESSION['status_code'] = "success";
+                    }
+                } else {
+                    // Incorrect password
+                    $_SESSION['status'] = "Incorrect password";
+                    header('Location: page-login.php');
+                    exit();
+                }
+            } else {
+                // User not found
+                $_SESSION['status'] = "User not found";
+                header('Location: page-login.php');
+                exit();
+            }
         } else {
-            $_SESSION['error'] = "Password does not match";
-            header("Location: page-login.php");
-            die();
-             
+            // Error in preparing statement
+            $_SESSION['status'] = "Error in querying the database";
+            header('Location: page-login.php');
+            exit();
         }
     } else {
-        $_SESSION['error'] = "Email does not match";
-        header("location:page-login.php");
-        die();
-    
-            
+        echo "Sorry could not find any data!";
     }
-        
-    
-    }
-
-
-if (isset($_SESSION['error'])) {
-    $errorMessage = $_SESSION['error'];
-    unset($_SESSION['error']);
-} else {
-    $errorMessage = '';
 }
-
 ?>
+
+
+<!-- Your HTML code remains unchanged -->
+
+
+
 <!doctype html>
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
@@ -87,14 +113,15 @@ if (isset($_SESSION['error'])) {
 
     <div class="sufee-login d-flex align-content-center flex-wrap">
         <div class="container">
-            <?php
-               include('fontpage/message.php'); 
-            ?>
+        
+            
+            
             <div class="login-content">
                 <div class="login-logo">
                     <a href="index.html">
                         <img class="align-content" src="images/logo.png" alt="">
                     </a>
+        
                 </div>
                 <div class="login-form">
                 <form action="page-login.php" method="post">
@@ -134,6 +161,7 @@ if (isset($_SESSION['error'])) {
             </div>
         </div>
     </div>
+    
 
 
     <script src="vendors/jquery/dist/jquery.min.js"></script>
